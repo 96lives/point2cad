@@ -3,6 +3,7 @@ import multiprocessing
 import numpy as np
 import os
 import torch
+import pickle
 from concurrent.futures import ProcessPoolExecutor, as_completed
 from tqdm import tqdm
 
@@ -51,6 +52,7 @@ if __name__ == "__main__":
     parser.add_argument("--max_parallel_surfaces", type=int, default=4)
     parser.add_argument("--num_inr_fit_attempts", type=int, default=1)
     parser.add_argument("--surfaces_multiprocessing", type=int, default=1)
+    parser.add_argument("--use_cached_meshes", default=False, action='store_true')
     cfg = parser.parse_args()
 
     seed_everything(cfg.seed)
@@ -83,8 +85,14 @@ if __name__ == "__main__":
     uniq_labels = np.unique(labels)
 
     # ============================ fit surfaces ============================
-
-    out_meshes = fn_process(cfg, uniq_labels, points, labels, device)
+    cache_path = 'out_meshes.pkl'
+    if cfg.use_cached_meshes:
+        with open(cache_path, 'rb') as f:
+            out_meshes = pickle.load(f)
+    else:
+        out_meshes = fn_process(cfg, uniq_labels, points, labels, device)
+        with open(cache_path, 'wb') as f:
+            pickle.dump(out_meshes, f)
 
     # ============================ save unclipped meshes ============================
     print("Saving unclipped meshes...")

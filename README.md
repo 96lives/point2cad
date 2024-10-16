@@ -63,7 +63,7 @@ cd build && sh docker_build.sh
 Then simply run from the repository root:
 
 ```shell
-docker run -it --rm --gpus "device=$CUDA_VISIBLE_DEVICES" -v .:/work/point2cad point2cad python -m point2cad.main 
+docker run -it --rm --gpus "device=$CUDA_VISIBLE_DEVICES" -v .:/work/point2cad toshas/point2cad:v1 python -m point2cad.main
 ```
 
 If docker is unavailable, refer to [PyMesh](https://github.com/PyMesh/PyMesh) installation guide to build the environment from source, or simply follow the steps from the [Dockerfile](build/Dockerfile) or [Colab installation script](build/colab_build.sh).
